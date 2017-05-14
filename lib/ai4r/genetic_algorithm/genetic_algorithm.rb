@@ -176,10 +176,14 @@ module Ai4r
       def fitness
         return @fitness if @fitness
         last_token = @data[0]
-        cost = 0
+        cost = 0.0
         @data[1..-1].each do |token|
           cost += @@costs[last_token][token]
           last_token = token
+        end
+        if !@@add_costs.nil?
+          cost += @@add_costs[0][@data[0]]
+          cost += @@add_costs[1][@data[-1]]
         end
         @fitness = -1 * cost
         return @fitness
@@ -260,8 +264,9 @@ module Ai4r
         return Chromosome.new(seed)
       end
 
-      def self.set_cost_matrix(costs)
+      def self.set_cost_matrix(costs, add_costs)
         @@costs = costs
+        @@add_costs = add_costs
       end
     end
 
